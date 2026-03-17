@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>総合占いゲーム</title>
+<style>
+    body {
+        font-family: "ヒラギノ角ゴシック", "Meiryo", sans-serif;
+        background: linear-gradient(to right, #fceabb, #f8b500);
+        color: #333;
+        text-align: center;
+        padding: 30px;
+    }
+    h1 {
+        color: #ff4500;
+    }
+    input, select, button {
+        padding: 10px;
+        margin: 5px;
+        font-size: 16px;
+    }
+    .result {
+        margin-top: 30px;
+        padding: 20px;
+        border-radius: 15px;
+        background: #fff8dc;
+        box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: left;
+    }
+    .item {
+        margin-bottom: 15px;
+    }
+    .item h3 {
+        margin-bottom: 5px;
+        color: #ff6347;
+    }
+</style>
+</head>
+<body>
+
+<h1>あなたの総合占い</h1>
+
+<p>名前、年齢、星座を入力して、今日の運勢をチェックしよう！</p>
+
+<div>
+    <input type="text" id="name" placeholder="名前">
+    <input type="number" id="age" placeholder="年齢" min="1" max="120">
+    <select id="zodiac">
+        <option value="">星座を選んでください</option>
+        <option value="牡羊座">牡羊座</option>
+        <option value="牡牛座">牡牛座</option>
+        <option value="双子座">双子座</option>
+        <option value="蟹座">蟹座</option>
+        <option value="獅子座">獅子座</option>
+        <option value="乙女座">乙女座</option>
+        <option value="天秤座">天秤座</option>
+        <option value="蠍座">蠍座</option>
+        <option value="射手座">射手座</option>
+        <option value="山羊座">山羊座</option>
+        <option value="水瓶座">水瓶座</option>
+        <option value="魚座">魚座</option>
+    </select>
+    <br>
+    <button onclick="generateFortune()">占う</button>
+</div>
+
+<div class="result" id="result" style="display:none;"></div>
+
+<script>
+function generateFortune() {
+    const name = document.getElementById('name').value.trim();
+    const age = parseInt(document.getElementById('age').value);
+    const zodiac = document.getElementById('zodiac').value;
+
+    if(!name || !age || !zodiac) {
+        alert("すべての項目を入力してください！");
+        return;
+    }
+
+    // 簡易姓名判断: 名前の文字コード合計で性格タイプを決定
+    let charSum = 0;
+    for(let i=0; i<name.length; i++) {
+        charSum += name.charCodeAt(i);
+    }
+    const personalityTypes = ["社交的で明るい","慎重で誠実","自由で好奇心旺盛","情熱的で行動力がある"];
+    const personality = personalityTypes[charSum % personalityTypes.length];
+
+    // 星座運勢簡易判定
+    const zodiacLuck = {
+        "牡羊座": [70, 80, 65, 60],
+        "牡牛座": [60, 70, 80, 65],
+        "双子座": [75, 65, 70, 60],
+        "蟹座": [65, 75, 60, 70],
+        "獅子座": [80, 70, 75, 60],
+        "乙女座": [60, 65, 70, 75],
+        "天秤座": [70, 75, 65, 80],
+        "蠍座": [65, 80, 60, 70],
+        "射手座": [75, 60, 80, 65],
+        "山羊座": [60, 70, 75, 80],
+        "水瓶座": [70, 65, 80, 75],
+        "魚座": [65, 70, 60, 80]
+    };
+    const luckValues = zodiacLuck[zodiac]; // [対人, 恋愛, 仕事, 金運]
+
+    const categories = ["対人運","恋愛運","仕事・勉学運","金運"];
+    const descriptions = [];
+
+    categories.forEach((cat, i)=>{
+        let desc = "";
+        const value = luckValues[i];
+        // 年齢と姓名判断の性格タイプで運勢補正
+        let adjustedValue = value + (age % 5) - (charSum % 4);
+        if(adjustedValue > 100) adjustedValue = 100;
+        if(adjustedValue < 0) adjustedValue = 0;
+
+        if(adjustedValue >= 80) {
+            desc = `今日の${cat}は非常に良好です！${personality}なあなたは周囲から信頼され、スムーズに物事が進むでしょう。新しい出会いやチャンスも期待できます。`;
+        } else if(adjustedValue >= 60) {
+            desc = `今日の${cat}はまずまず順調です。${personality}な性格が功を奏し、トラブルも回避できそうです。小さな努力が大きな成果につながります。`;
+        } else if(adjustedValue >= 40) {
+            desc = `今日の${cat}は注意が必要です。${personality}なあなたでも少し慎重になると良い日。急な判断や大きな決断は避けましょう。`;
+        } else {
+            desc = `今日の${cat}は低調です。${personality}な性格も活かしきれないかもしれません。無理せず休息をとることで明日に備えましょう。`;
+        }
+        descriptions.push({category: cat, text: desc});
+    });
+
+    let resultHTML = `<h2>${name}さん（${age}歳・${zodiac}）の運勢</h2>`;
+    descriptions.forEach(item=>{
+        resultHTML += `<div class="item"><h3>${item.category}</h3><p>${item.text}</p></div>`;
+    });
+
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = resultHTML;
+    resultDiv.style.display = 'block';
+}
+</script>
+
+</body>
+</html>
