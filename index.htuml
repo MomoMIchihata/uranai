@@ -4,46 +4,46 @@
 <meta charset="UTF-8">
 <title>総合占いゲーム</title>
 <style>
-    body {
-        font-family: "ヒラギノ角ゴシック", "Meiryo", sans-serif;
-        background: linear-gradient(to right, #fceabb, #f8b500);
-        color: #333;
-        text-align: center;
-        padding: 30px;
-    }
-    h1 {
-        color: #ff4500;
-    }
-    input, select, button {
-        padding: 10px;
-        margin: 5px;
-        font-size: 16px;
-    }
-    .result {
-        margin-top: 30px;
-        padding: 20px;
-        border-radius: 15px;
-        background: #fff8dc;
-        box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: left;
-    }
-    .item {
-        margin-bottom: 15px;
-    }
-    .item h3 {
-        margin-bottom: 5px;
-        color: #ff6347;
-    }
+body {
+    font-family: "ヒラギノ角ゴシック", "Meiryo", sans-serif;
+    background: linear-gradient(to right, #fceabb, #f8b500);
+    color: #333;
+    text-align: center;
+    padding: 30px;
+}
+h1 {
+    color: #ff4500;
+}
+input, select, button {
+    padding: 10px;
+    margin: 5px;
+    font-size: 16px;
+}
+.result {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 15px;
+    background: #fff8dc;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+.item {
+    margin-bottom: 15px;
+}
+.item h3 {
+    margin-bottom: 5px;
+    color: #ff6347;
+}
 </style>
 </head>
 <body>
 
 <h1>あなたの総合占い</h1>
 
-<p>名前、年齢、星座を入力して、今日の運勢をチェックしよう！</p>
+<p>名前、年齢、星座を入力して、今日の運勢をチェック！</p>
 
 <div>
     <input type="text" id="name" placeholder="名前">
@@ -80,15 +80,13 @@ function generateFortune() {
         return;
     }
 
-    // 簡易姓名判断: 名前の文字コード合計で性格タイプを決定
+    // 簡易姓名判断
     let charSum = 0;
-    for(let i=0; i<name.length; i++) {
-        charSum += name.charCodeAt(i);
-    }
+    for(let i=0; i<name.length; i++) charSum += name.charCodeAt(i);
     const personalityTypes = ["社交的で明るい","慎重で誠実","自由で好奇心旺盛","情熱的で行動力がある"];
     const personality = personalityTypes[charSum % personalityTypes.length];
 
-    // 星座運勢簡易判定
+    // 星座運勢
     const zodiacLuck = {
         "牡羊座": [70, 80, 65, 60],
         "牡牛座": [60, 70, 80, 65],
@@ -103,24 +101,23 @@ function generateFortune() {
         "水瓶座": [70, 65, 80, 75],
         "魚座": [65, 70, 60, 80]
     };
-    const luckValues = zodiacLuck[zodiac]; // [対人, 恋愛, 仕事, 金運]
+    const luckValues = zodiacLuck[zodiac];
 
     const categories = ["対人運","恋愛運","仕事・勉学運","金運"];
     const descriptions = [];
 
     categories.forEach((cat, i)=>{
-        let desc = "";
-        const value = luckValues[i];
-        // 年齢と姓名判断の性格タイプで運勢補正
-        let adjustedValue = value + (age % 5) - (charSum % 4);
-        if(adjustedValue > 100) adjustedValue = 100;
-        if(adjustedValue < 0) adjustedValue = 0;
+        let value = luckValues[i];
+        let adjusted = value + (age % 5) - (charSum % 4);
+        if(adjusted > 100) adjusted = 100;
+        if(adjusted < 0) adjusted = 0;
 
-        if(adjustedValue >= 80) {
+        let desc = "";
+        if(adjusted >= 80) {
             desc = `今日の${cat}は非常に良好です！${personality}なあなたは周囲から信頼され、スムーズに物事が進むでしょう。新しい出会いやチャンスも期待できます。`;
-        } else if(adjustedValue >= 60) {
+        } else if(adjusted >= 60) {
             desc = `今日の${cat}はまずまず順調です。${personality}な性格が功を奏し、トラブルも回避できそうです。小さな努力が大きな成果につながります。`;
-        } else if(adjustedValue >= 40) {
+        } else if(adjusted >= 40) {
             desc = `今日の${cat}は注意が必要です。${personality}なあなたでも少し慎重になると良い日。急な判断や大きな決断は避けましょう。`;
         } else {
             desc = `今日の${cat}は低調です。${personality}な性格も活かしきれないかもしれません。無理せず休息をとることで明日に備えましょう。`;
